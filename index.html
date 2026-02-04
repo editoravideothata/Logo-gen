@@ -8,11 +8,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        // Polyfill CRÍTICO: Deve ser a primeira coisa a rodar no head
+        // Polyfill robusto para evitar "process is not defined"
         window.process = { 
             env: { 
-                API_KEY: "" // Será preenchido pelo ambiente ou tratado no código
-            } 
+                API_KEY: "" 
+            },
+            nextTick: (cb) => setTimeout(cb, 0),
+            browser: true
+        };
+
+        // Captura de erros globais para ajudar a diagnosticar tela branca
+        window.onerror = function(message, source, lineno, colno, error) {
+            console.error("Erro Global:", message, "em", source, lineno + ":" + colno);
+            return false;
+        };
+        window.onunhandledrejection = function(event) {
+            console.error("Rejeição não tratada:", event.reason);
         };
     </script>
     <style>
@@ -55,19 +66,19 @@
     "react": "https://esm.sh/react@18.2.0",
     "react-dom": "https://esm.sh/react-dom@18.2.0",
     "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "@google/genai": "https://esm.sh/@google/genai@1.3.1",
     "react-router-dom": "https://esm.sh/react-router-dom@6.22.3",
-    "react/": "https://esm.sh/react@^19.2.4/",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+    "@google/genai": "https://esm.sh/@google/genai@1.3.1",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/"
   }
 }
 </script>
 </head>
 <body>
     <div id="root">
-        <!-- Loader inicial para evitar tela branca enquanto o JS carrega -->
-        <div style="height: 100vh; display: flex; align-items: center; justify-content: center; background: #000;">
-            <div style="width: 40px; height: 40px; border: 3px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear;"></div>
+        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; color: #666; font-family: sans-serif;">
+            <div style="width: 40px; height: 40px; border: 3px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; margin-bottom: 20px;"></div>
+            <p>Carregando LogoGen AI...</p>
         </div>
         <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
     </div>
