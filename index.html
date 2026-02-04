@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        // Polyfill robusto para evitar "process is not defined"
+        // Polyfill essencial para o SDK do Gemini
         window.process = { 
             env: { 
                 API_KEY: "" 
@@ -17,13 +17,21 @@
             browser: true
         };
 
-        // Captura de erros globais para ajudar a diagnosticar tela branca
+        // Captura de erros para evitar a tela branca silenciosa
         window.onerror = function(message, source, lineno, colno, error) {
-            console.error("Erro Global:", message, "em", source, lineno + ":" + colno);
+            const root = document.getElementById('root');
+            if (root) {
+                root.innerHTML = `
+                    <div style="height: 100vh; display: flex; align-items: center; justify-content: center; background: #000; color: #ff4444; padding: 20px; text-align: center; font-family: sans-serif;">
+                        <div>
+                            <h1 style="font-size: 24px; margin-bottom: 10px;">Erro de Carregamento</h1>
+                            <p style="color: #666;">${message}</p>
+                            <p style="font-size: 12px; margin-top: 20px; color: #444;">Verifique o console do navegador para mais detalhes.</p>
+                        </div>
+                    </div>
+                `;
+            }
             return false;
-        };
-        window.onunhandledrejection = function(event) {
-            console.error("Rejeição não tratada:", event.reason);
         };
     </script>
     <style>
@@ -76,9 +84,9 @@
 </head>
 <body>
     <div id="root">
-        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; color: #666; font-family: sans-serif;">
-            <div style="width: 40px; height: 40px; border: 3px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 1s infinite linear; margin-bottom: 20px;"></div>
-            <p>Carregando LogoGen AI...</p>
+        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; color: #fff; font-family: sans-serif;">
+            <div style="width: 30px; height: 30px; border: 2px solid #222; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s infinite linear; margin-bottom: 16px;"></div>
+            <p style="font-size: 13px; color: #555; letter-spacing: 0.05em;">CARREGANDO LOGOGEN AI</p>
         </div>
         <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
     </div>

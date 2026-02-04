@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { LogoStyle, LogoGenerationResult, GenerationState } from './types.ts';
-import { generateLogoImage } from './services/geminiService.ts';
-import { Button } from './components/ui/Button.tsx';
+import { LogoStyle, LogoGenerationResult, GenerationState } from './types';
+import { generateLogoImage } from './services/geminiService';
+import { Button } from './components/ui/Button';
 import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 const DownloadIcon = () => (
@@ -43,7 +43,7 @@ const App: React.FC = () => {
 
   const handleGenerate = async () => {
     if (apiKeyMissing) {
-      setState(prev => ({ ...prev, error: 'Configuração necessária: A variável de ambiente API_KEY não foi encontrada.' }));
+      setState(prev => ({ ...prev, error: 'A variável de ambiente API_KEY não foi encontrada. Configure-a no seu servidor.' }));
       return;
     }
 
@@ -91,7 +91,7 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      <div className="min-h-screen bg-black text-white">
+      <div className="min-h-screen bg-black text-white flex flex-col">
         <nav className="border-b border-zinc-800 bg-black/60 backdrop-blur-xl sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <Link to="/" className="flex items-center gap-2.5 group">
@@ -114,11 +114,11 @@ const App: React.FC = () => {
           </div>
         </nav>
 
-        <main className="max-w-7xl mx-auto px-6 py-12">
+        <main className="max-w-7xl mx-auto px-6 py-12 flex-grow w-full">
           {apiKeyMissing && (
             <div className="mb-10 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-500 text-sm flex items-center gap-3">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span><strong>Atenção:</strong> Adicione sua <strong>API_KEY</strong> nas configurações para que o gerador funcione.</span>
+              <span><strong>Atenção:</strong> Configure sua <strong>API_KEY</strong> nas variáveis de ambiente do seu servidor (Vercel, etc).</span>
             </div>
           )}
 
@@ -128,10 +128,10 @@ const App: React.FC = () => {
                 <div className="space-y-10">
                   <header className="space-y-4">
                     <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tighter leading-none gradient-text">
-                      Design de Logo <br /> Inteligente.
+                      Identidade Visual <br /> Instantânea.
                     </h1>
                     <p className="text-zinc-400 text-xl max-w-lg leading-relaxed">
-                      Gere logotipos exclusivos para sua marca usando o poder do Gemini 2.5 Flash Image.
+                      Gere logotipos exclusivos em segundos usando o poder do Gemini 2.5 Flash Image.
                     </p>
                   </header>
 
@@ -148,9 +148,9 @@ const App: React.FC = () => {
                     </div>
 
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Detalhes (Opcional)</label>
+                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Detalhes Extras (Opcional)</label>
                       <textarea 
-                        placeholder="Ex: Minimalista, moderno, cores escuras..."
+                        placeholder="Ex: Estilo minimalista, cores azul e preto, foco em tecnologia..."
                         rows={3}
                         className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all text-white resize-none"
                         value={description}
@@ -175,7 +175,7 @@ const App: React.FC = () => {
                              key === 'MINIMALIST' ? 'Minimalista' :
                              key === 'RETRO' ? 'Vintage' :
                              key === 'LUXURY' ? 'Elegante' :
-                             key === 'PLAYFUL' ? 'Divertido' : 'Abstrato'}
+                             key === 'PLAYFUL' ? 'Amigável' : 'Abstrato'}
                           </button>
                         ))}
                       </div>
@@ -193,7 +193,7 @@ const App: React.FC = () => {
                       isLoading={state.isGenerating}
                       onClick={handleGenerate}
                     >
-                      Gerar Agora
+                      Gerar Logo
                     </Button>
                   </div>
                 </div>
@@ -205,13 +205,13 @@ const App: React.FC = () => {
                       {state.isGenerating ? (
                         <div className="text-center space-y-6">
                           <div className="w-72 h-72 shimmer rounded-3xl mx-auto shadow-2xl"></div>
-                          <p className="text-zinc-200 font-semibold text-lg">Processando...</p>
+                          <p className="text-zinc-200 font-semibold text-lg">Gerando sua Identidade...</p>
                         </div>
                       ) : state.currentLogo ? (
                         <div className="w-full h-full relative group/image p-12">
                           <img 
                             src={state.currentLogo.url} 
-                            alt="Logo" 
+                            alt="Logo Gerado" 
                             className="w-full h-full object-contain animate-in zoom-in duration-500"
                           />
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center justify-center">
@@ -221,7 +221,7 @@ const App: React.FC = () => {
                               onClick={() => downloadLogo(state.currentLogo!.url, state.currentLogo!.prompt)}
                             >
                               <DownloadIcon />
-                              Salvar PNG
+                              Salvar em PNG
                             </Button>
                           </div>
                         </div>
@@ -230,7 +230,7 @@ const App: React.FC = () => {
                           <div className="w-20 h-20 border-2 border-dashed border-zinc-800 rounded-3xl flex items-center justify-center mx-auto text-zinc-800">
                              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
                           </div>
-                          <p className="text-zinc-600 font-medium">Sua criação aparecerá aqui.</p>
+                          <p className="text-zinc-600 font-medium">Preencha os dados ao lado para ver seu logo aqui.</p>
                         </div>
                       )}
                     </div>
@@ -243,11 +243,13 @@ const App: React.FC = () => {
               <div className="space-y-10 animate-in fade-in slide-in-from-bottom duration-500">
                 <header>
                   <h2 className="text-4xl font-bold tracking-tight">Meus Logos</h2>
+                  <p className="text-zinc-400">Suas últimas criações salvas localmente.</p>
                 </header>
 
                 {state.history.length === 0 ? (
-                  <div className="glass p-24 rounded-[2rem] text-center">
+                  <div className="glass p-24 rounded-[2rem] text-center border-dashed border-zinc-800">
                     <p className="text-zinc-600 text-lg">Nenhum logo gerado ainda.</p>
+                    <Link to="/" className="text-white underline mt-2 inline-block">Criar meu primeiro logo</Link>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -276,6 +278,10 @@ const App: React.FC = () => {
             } />
           </Routes>
         </main>
+
+        <footer className="border-t border-zinc-900 py-12 text-center text-zinc-600 text-sm">
+          <p>© 2024 LogoGen AI. Desenvolvido com Gemini API.</p>
+        </footer>
       </div>
     </Router>
   );
