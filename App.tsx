@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { LogoStyle, LogoGenerationResult, GenerationState } from './types';
-import { generateLogoImage } from './services/geminiService';
-import { Button } from './components/ui/Button';
+import { LogoStyle, LogoGenerationResult, GenerationState } from './types.ts';
+import { generateLogoImage } from './services/geminiService.ts';
+import { Button } from './components/ui/Button.tsx';
 import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 
 const DownloadIcon = () => (
@@ -26,7 +26,6 @@ const App: React.FC = () => {
   });
 
   useEffect(() => {
-    // Verificar se a API KEY existe no ambiente injetado
     if (!process.env.API_KEY || process.env.API_KEY === "") {
       setApiKeyMissing(true);
     }
@@ -43,12 +42,12 @@ const App: React.FC = () => {
 
   const handleGenerate = async () => {
     if (apiKeyMissing) {
-      setState(prev => ({ ...prev, error: 'A variável de ambiente API_KEY não foi encontrada. Configure-a no seu servidor.' }));
+      setState(prev => ({ ...prev, error: 'Variável API_KEY não configurada no servidor.' }));
       return;
     }
 
     if (!brandName.trim()) {
-      setState(prev => ({ ...prev, error: 'Por favor, digite o nome da sua marca.' }));
+      setState(prev => ({ ...prev, error: 'Digite o nome da marca.' }));
       return;
     }
 
@@ -117,8 +116,7 @@ const App: React.FC = () => {
         <main className="max-w-7xl mx-auto px-6 py-12 flex-grow w-full">
           {apiKeyMissing && (
             <div className="mb-10 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-500 text-sm flex items-center gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span><strong>Atenção:</strong> Configure sua <strong>API_KEY</strong> nas variáveis de ambiente do seu servidor (Vercel, etc).</span>
+              <span><strong>Atenção:</strong> Configure a <strong>API_KEY</strong> na Vercel para funcionar.</span>
             </div>
           )}
 
@@ -128,10 +126,10 @@ const App: React.FC = () => {
                 <div className="space-y-10">
                   <header className="space-y-4">
                     <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tighter leading-none gradient-text">
-                      Identidade Visual <br /> Instantânea.
+                      Design de Logo <br /> Instantâneo.
                     </h1>
                     <p className="text-zinc-400 text-xl max-w-lg leading-relaxed">
-                      Gere logotipos exclusivos em segundos usando o poder do Gemini 2.5 Flash Image.
+                      Crie identidades visuais profissionais usando o Gemini 2.5 Flash Image.
                     </p>
                   </header>
 
@@ -141,135 +139,93 @@ const App: React.FC = () => {
                       <input 
                         type="text"
                         placeholder="Ex: Innova Tech"
-                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all text-white"
+                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-5 py-4 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all text-white"
                         value={brandName}
                         onChange={(e) => setBrandName(e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-3">
-                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Detalhes Extras (Opcional)</label>
+                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Descrição Visual</label>
                       <textarea 
-                        placeholder="Ex: Estilo minimalista, cores azul e preto, foco em tecnologia..."
-                        rows={3}
-                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-white/10 transition-all text-white resize-none"
+                        placeholder="Ex: Minimalista, moderno, elegante..."
+                        rows={2}
+                        className="w-full bg-zinc-900/50 border border-zinc-800 rounded-xl px-5 py-4 focus:outline-none focus:ring-1 focus:ring-white/20 transition-all text-white resize-none"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                       />
                     </div>
 
                     <div className="space-y-4">
-                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Estilo Visual</label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      <label className="text-xs font-bold text-zinc-500 uppercase tracking-widest">Estilo</label>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                         {Object.entries(LogoStyle).map(([key, value]) => (
                           <button
                             key={key}
                             onClick={() => setSelectedStyle(value as LogoStyle)}
-                            className={`px-4 py-3 rounded-xl text-xs font-semibold border transition-all duration-300 ${
+                            className={`px-3 py-2.5 rounded-xl text-[11px] font-bold border transition-all ${
                               selectedStyle === value 
-                              ? 'bg-white text-black border-white shadow-lg shadow-white/10' 
-                              : 'bg-zinc-900/50 text-zinc-500 border-zinc-800 hover:border-zinc-600 hover:text-zinc-300'
+                              ? 'bg-white text-black border-white' 
+                              : 'bg-zinc-900/50 text-zinc-500 border-zinc-800 hover:border-zinc-700'
                             }`}
                           >
-                            {key === 'TECH' ? 'Moderno' : 
-                             key === 'MINIMALIST' ? 'Minimalista' :
-                             key === 'RETRO' ? 'Vintage' :
-                             key === 'LUXURY' ? 'Elegante' :
-                             key === 'PLAYFUL' ? 'Amigável' : 'Abstrato'}
+                            {key}
                           </button>
                         ))}
                       </div>
                     </div>
 
                     {state.error && (
-                      <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm flex items-start gap-3">
-                        <svg className="shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                        <span>{state.error}</span>
+                      <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs">
+                        {state.error}
                       </div>
                     )}
 
                     <Button 
-                      className="w-full h-16 text-lg rounded-2xl shadow-xl transition-all active:scale-95" 
+                      className="w-full h-14 text-md rounded-xl" 
                       isLoading={state.isGenerating}
                       onClick={handleGenerate}
                     >
-                      Gerar Logo
+                      Gerar Agora
                     </Button>
                   </div>
                 </div>
 
                 <div className="lg:sticky lg:top-28">
-                  <div className="relative group">
-                    <div className="absolute -inset-1 bg-gradient-to-r from-zinc-800 via-zinc-400 to-zinc-800 rounded-[2.5rem] blur-2xl opacity-10"></div>
-                    <div className="relative glass aspect-square rounded-[2.5rem] flex items-center justify-center overflow-hidden border border-zinc-800/50 bg-zinc-950/40">
-                      {state.isGenerating ? (
-                        <div className="text-center space-y-6">
-                          <div className="w-72 h-72 shimmer rounded-3xl mx-auto shadow-2xl"></div>
-                          <p className="text-zinc-200 font-semibold text-lg">Gerando sua Identidade...</p>
+                  <div className="relative glass aspect-square rounded-[2rem] flex items-center justify-center overflow-hidden border border-zinc-800/50 bg-zinc-950/40">
+                    {state.isGenerating ? (
+                      <div className="text-center space-y-4">
+                        <div className="w-64 h-64 shimmer rounded-2xl mx-auto"></div>
+                        <p className="text-zinc-500 animate-pulse text-sm">Criando...</p>
+                      </div>
+                    ) : state.currentLogo ? (
+                      <div className="w-full h-full p-8 group relative">
+                        <img src={state.currentLogo.url} alt="Logo" className="w-full h-full object-contain" />
+                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Button variant="primary" onClick={() => downloadLogo(state.currentLogo!.url, state.currentLogo!.prompt)}>
+                            Download PNG
+                          </Button>
                         </div>
-                      ) : state.currentLogo ? (
-                        <div className="w-full h-full relative group/image p-12">
-                          <img 
-                            src={state.currentLogo.url} 
-                            alt="Logo Gerado" 
-                            className="w-full h-full object-contain animate-in zoom-in duration-500"
-                          />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/image:opacity-100 transition-opacity flex items-center justify-center">
-                            <Button 
-                              variant="primary" 
-                              className="px-8 py-4 rounded-xl shadow-2xl"
-                              onClick={() => downloadLogo(state.currentLogo!.url, state.currentLogo!.prompt)}
-                            >
-                              <DownloadIcon />
-                              Salvar em PNG
-                            </Button>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="text-center p-10 space-y-4">
-                          <div className="w-20 h-20 border-2 border-dashed border-zinc-800 rounded-3xl flex items-center justify-center mx-auto text-zinc-800">
-                             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                          </div>
-                          <p className="text-zinc-600 font-medium">Preencha os dados ao lado para ver seu logo aqui.</p>
-                        </div>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div className="text-zinc-800 text-sm">Aguardando dados...</div>
+                    )}
                   </div>
                 </div>
               </div>
             } />
             
             <Route path="/history" element={
-              <div className="space-y-10 animate-in fade-in slide-in-from-bottom duration-500">
-                <header>
-                  <h2 className="text-4xl font-bold tracking-tight">Meus Logos</h2>
-                  <p className="text-zinc-400">Suas últimas criações salvas localmente.</p>
-                </header>
-
+              <div className="space-y-8">
+                <h2 className="text-3xl font-bold">Histórico</h2>
                 {state.history.length === 0 ? (
-                  <div className="glass p-24 rounded-[2rem] text-center border-dashed border-zinc-800">
-                    <p className="text-zinc-600 text-lg">Nenhum logo gerado ainda.</p>
-                    <Link to="/" className="text-white underline mt-2 inline-block">Criar meu primeiro logo</Link>
-                  </div>
+                  <p className="text-zinc-600">Nada por aqui.</p>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                     {state.history.map((item) => (
-                      <div key={item.id} className="glass rounded-[2rem] overflow-hidden border border-zinc-800/30 hover:border-zinc-600 transition-all shadow-lg">
-                        <div className="aspect-square bg-zinc-950/50 p-8 flex items-center justify-center">
-                          <img src={item.url} alt={item.prompt} className="w-full h-full object-contain" />
-                        </div>
-                        <div className="p-6 flex items-center justify-between bg-zinc-900/20">
-                          <div className="truncate pr-4">
-                            <p className="font-bold truncate text-sm text-zinc-200">{item.prompt}</p>
-                            <p className="text-[10px] text-zinc-500 font-bold uppercase">{new Date(item.timestamp).toLocaleDateString()}</p>
-                          </div>
-                          <button 
-                            onClick={() => downloadLogo(item.url, item.prompt)}
-                            className="p-3 bg-zinc-800/50 hover:bg-white hover:text-black rounded-xl transition-all"
-                          >
-                            <DownloadIcon />
-                          </button>
-                        </div>
+                      <div key={item.id} className="glass rounded-2xl overflow-hidden p-4 space-y-3">
+                        <img src={item.url} className="w-full aspect-square object-contain" />
+                        <button onClick={() => downloadLogo(item.url, item.prompt)} className="w-full py-2 bg-zinc-800 rounded-lg text-xs hover:bg-zinc-700">Baixar</button>
                       </div>
                     ))}
                   </div>
@@ -278,10 +234,6 @@ const App: React.FC = () => {
             } />
           </Routes>
         </main>
-
-        <footer className="border-t border-zinc-900 py-12 text-center text-zinc-600 text-sm">
-          <p>© 2024 LogoGen AI. Desenvolvido com Gemini API.</p>
-        </footer>
       </div>
     </Router>
   );

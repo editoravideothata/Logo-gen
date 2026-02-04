@@ -5,68 +5,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LogoGen AI - Gerador de Logos Profissional</title>
+    
+    <!-- Preload para carregamento ultra rápido -->
+    <link rel="modulepreload" href="https://esm.sh/react@18.2.0">
+    <link rel="modulepreload" href="https://esm.sh/react-dom@18.2.0/client">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
-        // Polyfill essencial para o SDK do Gemini
+        // Polyfill essencial
         window.process = { 
-            env: { 
-                API_KEY: "" 
-            },
+            env: { API_KEY: "" },
             nextTick: (cb) => setTimeout(cb, 0),
             browser: true
         };
 
-        // Captura de erros para evitar a tela branca silenciosa
-        window.onerror = function(message, source, lineno, colno, error) {
-            const root = document.getElementById('root');
-            if (root) {
-                root.innerHTML = `
-                    <div style="height: 100vh; display: flex; align-items: center; justify-content: center; background: #000; color: #ff4444; padding: 20px; text-align: center; font-family: sans-serif;">
-                        <div>
-                            <h1 style="font-size: 24px; margin-bottom: 10px;">Erro de Carregamento</h1>
-                            <p style="color: #666;">${message}</p>
-                            <p style="font-size: 12px; margin-top: 20px; color: #444;">Verifique o console do navegador para mais detalhes.</p>
-                        </div>
-                    </div>
-                `;
+        // Fallback para erros críticos
+        window.onerror = function(msg) {
+            if (msg.includes('import')) {
+                const root = document.getElementById('root');
+                if (root) root.innerHTML = '<div style="color:white;text-align:center;padding:50px">Erro ao carregar módulos. Recarregue a página.</div>';
             }
-            return false;
         };
     </script>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #000;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-            min-height: 100vh;
-        }
-        .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .gradient-text {
-            background: linear-gradient(to right, #ffffff, #a1a1aa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .shimmer {
-            background: linear-gradient(90deg, #111 25%, #222 50%, #111 75%);
-            background-size: 200% 100%;
-            animation: shimmer-animation 1.5s infinite linear;
-        }
-        @keyframes shimmer-animation {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        #root {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #000; color: #fff; margin: 0; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .gradient-text { background: linear-gradient(to right, #fff, #71717a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .shimmer { background: linear-gradient(90deg, #111 25%, #222 50%, #111 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite linear; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
     <script type="importmap">
 {
@@ -84,11 +52,9 @@
 </head>
 <body>
     <div id="root">
-        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; color: #fff; font-family: sans-serif;">
-            <div style="width: 30px; height: 30px; border: 2px solid #222; border-top-color: #fff; border-radius: 50%; animation: spin 0.8s infinite linear; margin-bottom: 16px;"></div>
-            <p style="font-size: 13px; color: #555; letter-spacing: 0.05em;">CARREGANDO LOGOGEN AI</p>
+        <div style="height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000;">
+            <div style="width: 24px; height: 24px; border: 2px solid #333; border-top-color: #fff; border-radius: 50%; animation: spin 0.6s infinite linear;"></div>
         </div>
-        <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
     </div>
     <script type="module" src="index.tsx"></script>
 </body>
